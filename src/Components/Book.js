@@ -4,7 +4,7 @@ function Book(props) {
   const { book } = props;
 
   return (
-    <li>
+    <li key={book.title}>
       <div className="book">
         <div className="book-top">
           <div
