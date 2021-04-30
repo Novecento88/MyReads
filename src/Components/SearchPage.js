@@ -11,23 +11,28 @@ class SearchPage extends React.Component {
   };
 
   searchForQuery(query) {
-    BooksAPI.search(query).then((books) => {
-      console.log("Search results: ", books);
+    BooksAPI.search(query)
+      .then((books) => {
+        console.log("Search results: ", books);
 
-      const booksByShelf = books.reduce((shelf, book) => {
-        if (!shelf[book.shelf]) {
-          shelf[book.shelf] = [];
-        }
+        const booksByShelf = books.reduce((shelf, book) => {
+          if (!shelf[book.shelf]) {
+            shelf[book.shelf] = [];
+          }
 
-        shelf[book.shelf].push(book);
+          shelf[book.shelf].push(book);
 
-        return shelf;
-      }, {});
+          return shelf;
+        }, {});
 
-      this.setState(() => ({
-        booksByShelf: booksByShelf,
-      }));
-    });
+        this.setState(() => ({
+          booksByShelf: booksByShelf,
+        }));
+      })
+      .catch((error) => {
+        console.log("Error: ", error);
+        this.clearReasults();
+      });
   }
 
   updateQuery(query) {
@@ -46,8 +51,9 @@ class SearchPage extends React.Component {
 
   clearReasults() {
     this.setState(() => ({
-      books: [],
+      booksByShelf: {},
     }));
+    console.log("Clear results.");
   }
 
   render() {
