@@ -3,6 +3,13 @@ import React from "react";
 function Book(props) {
   const { book } = props;
 
+  const handleUpdate = (e, book) => {
+    e.preventDefault();
+    if (this.props.updateBookHandler) {
+      this.props.updateBookHandler(book, e.target.value);
+    }
+  };
+
   return (
     <li key={book.title}>
       <div className="book">
@@ -16,7 +23,7 @@ function Book(props) {
             }}
           ></div>
           <div className="book-shelf-changer">
-            <select>
+            <select onChange={(event) => handleUpdate(event, book)}>
               <option value="move" disabled>
                 Move to...
               </option>
