@@ -39,8 +39,6 @@ class BooksCatalog extends React.Component {
         <div className="list-books-content">
           <div>
             {Object.entries(this.state.booksByShelf).map((entry, index) => {
-              console.log("Shelf: ", BookShelves[entry[0]]);
-              console.log("Books: ", entry[1]);
               return (
                 <BookShelf
                   key={index}

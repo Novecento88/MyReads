@@ -56,6 +56,12 @@ class SearchPage extends React.Component {
     console.log("Clear results.");
   }
 
+  handleBookUpdate(book, shelf) {
+    BooksAPI.update(book, shelf).then((response) => {
+      console.log(response);
+    });
+  }
+
   render() {
     const { query } = this.state;
 
@@ -78,13 +84,12 @@ class SearchPage extends React.Component {
           <ol className="books-grid">
             <div>
               {Object.entries(this.state.booksByShelf).map((entry, index) => {
-                console.log("Shelf: ", BookShelves[entry[0]]);
-                console.log("Books: ", entry[1]);
                 return (
                   <BookShelf
                     key={index}
                     bookShelf={BookShelves[entry[0]]}
                     books={entry[1]}
+                    handleBookUpdate={this.handleBookUpdate}
                   />
                 );
               })}

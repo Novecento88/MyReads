@@ -1,14 +1,19 @@
 import React from "react";
+import bookPlaceholderImage from "../icons/book_placeholder.svg";
 
 function Book(props) {
   const { book } = props;
 
   const handleUpdate = (e, book) => {
     e.preventDefault();
-    if (this.props.updateBookHandler) {
-      this.props.updateBookHandler(book, e.target.value);
+    if (props.handleBookUpdate) {
+      props.handleBookUpdate(book, e.target.value);
     }
   };
+
+  const bookCoverImageUrl = book.imageLinks
+    ? book.imageLinks.smallThumbnail
+    : bookPlaceholderImage;
 
   return (
     <li key={book.title}>
@@ -19,7 +24,10 @@ function Book(props) {
             style={{
               width: 128,
               height: 193,
-              backgroundImage: `url(${book.imageLinks.smallThumbnail})`,
+              backgroundImage: `url(${bookCoverImageUrl})`,
+              backgroundPosition: "center",
+              backgroundSize: "100%",
+              backgroundRepeat: "no-repeat",
             }}
           ></div>
           <div className="book-shelf-changer">
