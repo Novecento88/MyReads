@@ -14,16 +14,22 @@ class SearchPage extends React.Component {
     BooksAPI.search(query)
       .then((response) => {
         console.log("Search results: ", response);
-        if (!("error" in response)) {
-          this.setState(() => ({
-            books: response,
-          }));
+        if ("error" in response) {
+          this.handleError(response["error"]);
+          return;
         }
+        this.setState(() => ({
+          books: response,
+        }));
       })
       .catch((error) => {
-        console.log("Error: ", error);
-        this.clearReasults();
+        this.handleError(error);
       });
+  }
+
+  handleError(error) {
+    console.log("ERROR: ", error);
+    this.clearReasults();
   }
 
   updateQuery(query) {
@@ -42,9 +48,9 @@ class SearchPage extends React.Component {
 
   clearReasults() {
     this.setState(() => ({
-      booksByShelf: {},
+      books: [],
     }));
-    console.log("Clear results.");
+    console.log("Results cleared.");
   }
 
   handleBookUpdate(book, shelf) {
