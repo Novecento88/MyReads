@@ -1,33 +1,24 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import * as BooksAPI from "../BooksAPI";
-import BookShelf from "./BookShelf";
-import { BookShelves } from "../Util";
+import Book from "./Book";
 
 class SearchPage extends React.Component {
   state = {
     query: "",
-    booksByShelf: {},
+    books: [],
+    ownedBooks: {},
   };
 
   searchForQuery(query) {
     BooksAPI.search(query)
-      .then((books) => {
-        console.log("Search results: ", books);
-
-        const booksByShelf = books.reduce((shelf, book) => {
-          if (!shelf[book.shelf]) {
-            shelf[book.shelf] = [];
-          }
-
-          shelf[book.shelf].push(book);
-
-          return shelf;
-        }, {});
-
-        this.setState(() => ({
-          booksByShelf: booksByShelf,
-        }));
+      .then((response) => {
+        console.log("Search results: ", response);
+        if (!("error" in response)) {
+          this.setState(() => ({
+            books: response,
+          }));
+        }
       })
       .catch((error) => {
         console.log("Error: ", error);
@@ -62,8 +53,22 @@ class SearchPage extends React.Component {
     });
   }
 
+  componentDidMount() {
+    BooksAPI.getAll().then((books) => {
+      console.log("OWNED BOOKS: ", books);
+      const ownedBooks = books.reduce((books, book) => {
+        books[book.id] = book.shelf;
+        return books;
+      }, {});
+
+      this.setState(() => ({
+        ownedBooks,
+      }));
+    });
+  }
+
   render() {
-    const { query } = this.state;
+    const { query, books } = this.state;
 
     return (
       <div className="search-books">
@@ -81,20 +86,22 @@ class SearchPage extends React.Component {
           </div>
         </div>
         <div className="search-books-results">
-          <ol className="books-grid">
-            <div>
-              {Object.entries(this.state.booksByShelf).map((entry, index) => {
-                return (
-                  <BookShelf
-                    key={index}
-                    bookShelf={BookShelves[entry[0]]}
-                    books={entry[1]}
-                    handleBookUpdate={this.handleBookUpdate}
-                  />
-                );
-              })}
-            </div>
-          </ol>
+          <div className="bookshelf-books">
+            <ol className="books-grid">
+              {books.map((book, index) => (
+                <Book
+                  key={index}
+                  book={book}
+                  bookShelf={
+                    this.state.ownedBooks[book.id]
+                      ? this.state.ownedBooks[book.id]
+                      : "none"
+                  }
+                  handleBookUpdate={this.handleBookUpdate}
+                />
+              ))}
+            </ol>
+          </div>
         </div>
       </div>
     );

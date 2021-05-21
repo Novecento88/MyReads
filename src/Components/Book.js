@@ -2,7 +2,7 @@ import React from "react";
 import bookPlaceholderImage from "../icons/book_placeholder.svg";
 
 function Book(props) {
-  const { book } = props;
+  const { book, bookShelf } = props;
 
   const handleUpdate = (e, book) => {
     e.preventDefault();
@@ -31,7 +31,10 @@ function Book(props) {
             }}
           ></div>
           <div className="book-shelf-changer">
-            <select onChange={(event) => handleUpdate(event, book)}>
+            <select
+              value={bookShelf}
+              onChange={(event) => handleUpdate(event, book)}
+            >
               <option value="move" disabled>
                 Move to...
               </option>

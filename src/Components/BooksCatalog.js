@@ -2,7 +2,6 @@ import React from "react";
 import { Link } from "react-router-dom";
 import * as BooksAPI from "../BooksAPI";
 import BookShelf from "./BookShelf";
-import { BookShelves } from "../Util";
 
 class BooksCatalog extends React.Component {
   state = {
@@ -40,11 +39,7 @@ class BooksCatalog extends React.Component {
           <div>
             {Object.entries(this.state.booksByShelf).map((entry, index) => {
               return (
-                <BookShelf
-                  key={index}
-                  bookShelf={BookShelves[entry[0]]}
-                  books={entry[1]}
-                />
+                <BookShelf key={index} bookShelf={entry[0]} books={entry[1]} />
               );
             })}
           </div>
