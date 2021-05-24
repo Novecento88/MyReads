@@ -4,11 +4,18 @@ import * as BooksAPI from "../BooksAPI";
 import Book from "./Book";
 
 class SearchPage extends React.Component {
-  state = {
-    query: "",
-    books: [],
-    ownedBooks: {},
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      query: "",
+      books: [],
+      ownedBooks: {},
+    };
+
+    this.handleBookUpdate = this.handleBookUpdate.bind(this);
+
+    this.refreshBooksList = this.refreshBooksList.bind(this);
+  }
 
   searchForQuery(query) {
     BooksAPI.search(query)
@@ -54,23 +61,33 @@ class SearchPage extends React.Component {
   }
 
   handleBookUpdate(book, shelf) {
-    BooksAPI.update(book, shelf).then((response) => {
-      console.log(response);
-    });
+    BooksAPI.update(book, shelf)
+      .then((response) => {
+        console.log(response);
+        this.refreshBooksList();
+      })
+      .catch((error) => {
+        console.log("ERROR: ", error);
+      });
   }
 
-  componentDidMount() {
+  refreshBooksList() {
     BooksAPI.getAll().then((books) => {
-      console.log("OWNED BOOKS: ", books);
       const ownedBooks = books.reduce((books, book) => {
         books[book.id] = book.shelf;
         return books;
       }, {});
 
+      console.log("OWNED BOOKS: ", ownedBooks);
+
       this.setState(() => ({
         ownedBooks,
       }));
     });
+  }
+
+  componentDidMount() {
+    this.refreshBooksList();
   }
 
   render() {

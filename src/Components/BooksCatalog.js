@@ -4,11 +4,29 @@ import * as BooksAPI from "../BooksAPI";
 import BookShelf from "./BookShelf";
 
 class BooksCatalog extends React.Component {
-  state = {
-    booksByShelf: {},
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      booksByShelf: {},
+    };
 
-  componentDidMount() {
+    this.handleBookUpdate = this.handleBookUpdate.bind(this);
+
+    this.refreshBooksList = this.refreshBooksList.bind(this);
+  }
+
+  handleBookUpdate(book, shelf) {
+    BooksAPI.update(book, shelf)
+      .then((response) => {
+        console.log(response);
+        this.refreshBooksList();
+      })
+      .catch((error) => {
+        console.log("ERROR: ", error);
+      });
+  }
+
+  refreshBooksList() {
     BooksAPI.getAll().then((books) => {
       const booksByShelf = books.reduce((shelf, book) => {
         if (!shelf[book.shelf]) {
@@ -28,6 +46,10 @@ class BooksCatalog extends React.Component {
     });
   }
 
+  componentDidMount() {
+    this.refreshBooksList();
+  }
+
   render() {
     console.log("Books by Shelf: ", this.state.booksByShelf);
     return (
@@ -39,7 +61,12 @@ class BooksCatalog extends React.Component {
           <div>
             {Object.entries(this.state.booksByShelf).map((entry, index) => {
               return (
-                <BookShelf key={index} bookShelf={entry[0]} books={entry[1]} />
+                <BookShelf
+                  key={index}
+                  bookShelf={entry[0]}
+                  handleBookUpdate={this.handleBookUpdate}
+                  books={entry[1]}
+                />
               );
             })}
           </div>
