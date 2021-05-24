@@ -26,9 +26,9 @@ class BooksCatalog extends React.Component {
       });
   }
 
-  refreshBooksList() {
-    BooksAPI.getAll().then((books) => {
-      const booksByShelf = books.reduce((shelf, book) => {
+  async refreshBooksList() {
+    const booksByShelf = await BooksAPI.getAll().then((books) => {
+      return books.reduce((shelf, book) => {
         if (!shelf[book.shelf]) {
           shelf[book.shelf] = [];
         }
@@ -37,13 +37,13 @@ class BooksCatalog extends React.Component {
 
         return shelf;
       }, {});
-
-      console.log("Books by Shelf: ", booksByShelf);
-
-      this.setState(() => ({
-        booksByShelf,
-      }));
     });
+
+    console.log("Books by Shelf: ", booksByShelf);
+
+    this.setState(() => ({
+      booksByShelf,
+    }));
   }
 
   componentDidMount() {

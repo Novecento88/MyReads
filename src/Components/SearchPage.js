@@ -17,21 +17,20 @@ class SearchPage extends React.Component {
     this.refreshBooksList = this.refreshBooksList.bind(this);
   }
 
-  searchForQuery(query) {
-    BooksAPI.search(query)
-      .then((response) => {
-        console.log("Search results: ", response);
-        if ("error" in response) {
-          this.handleError(response["error"]);
-          return;
-        }
-        this.setState(() => ({
-          books: response,
-        }));
-      })
-      .catch((error) => {
-        this.handleError(error);
-      });
+  async searchForQuery(query) {
+    const response = await BooksAPI.search(query).catch((error) => {
+      this.handleError(error);
+    });
+
+    console.log("Search results: ", response);
+    if ("error" in response) {
+      this.handleError(response["error"]);
+      return;
+    }
+
+    this.setState(() => ({
+      books: response,
+    }));
   }
 
   handleError(error) {
@@ -60,7 +59,7 @@ class SearchPage extends React.Component {
     console.log("Results cleared.");
   }
 
-  handleBookUpdate(book, shelf) {
+  async handleBookUpdate(book, shelf) {
     BooksAPI.update(book, shelf)
       .then((response) => {
         console.log(response);
@@ -71,19 +70,19 @@ class SearchPage extends React.Component {
       });
   }
 
-  refreshBooksList() {
-    BooksAPI.getAll().then((books) => {
-      const ownedBooks = books.reduce((books, book) => {
+  async refreshBooksList() {
+    const ownedBooks = await BooksAPI.getAll().then((books) => {
+      return books.reduce((books, book) => {
         books[book.id] = book.shelf;
         return books;
       }, {});
-
-      console.log("OWNED BOOKS: ", ownedBooks);
-
-      this.setState(() => ({
-        ownedBooks,
-      }));
     });
+
+    console.log("OWNED BOOKS: ", ownedBooks);
+
+    this.setState(() => ({
+      ownedBooks,
+    }));
   }
 
   componentDidMount() {
